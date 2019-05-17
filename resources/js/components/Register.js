@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 
 import $ from "jquery";
 import axios from "axios";
+import classnames from 'classnames';
+import PropTypes from 'prop-types';
+
 
 class Register extends Component {
 
@@ -12,7 +15,7 @@ class Register extends Component {
       name: '',
       email: '',
       password: '',
-      password_confirm: '',
+      password_confirmation: '',
       errors: {}
     }
 
@@ -32,28 +35,39 @@ class Register extends Component {
         name: this.state.name,
         email: this.state.email,
         password: this.state.password,
-        password_confirmation: this.state.password_confirm
+        password_confirmation: this.state.password_confirmation
       }
       //console.log(users);
-      this.registerUser(user);
+      this.registerUser(user, this.props.history);
     }
 
-    registerUser = (user)  => {
+    registerUser = (user, history)  => {
       
       axios.post('http://dedicatedgamingisp.com/api/register', user)
               .then(response => {
-                console.log(response)
+                (res => history.push('/login'));
               })
-              .catch(err => {
-                console.log(err);
-                  // dispatch({
-                  //     type: GET_ERRORS,
-                  //     payload: err.response.data
-                  // });
+              .catch(error => {
+                console.log(error.response.data);
+                  this.setState({
+                    errors: JSON.parse(error.response.data)
+                  });
               });
     }
 
+    componentWillReceiveProps(nextProps) {
+      if(nextProps.errors) {
+          this.setState({
+              errors: nextProps.errors
+          });
+      }
+  }
+
     render() {
+      const { errors } = this.state;
+      console.log( errors.password );
+      console.log( errors.password_confirmation );
+      //console.log( errors.name );
         return (
           <React.Fragment>
           <header className='react-header'>
@@ -69,41 +83,53 @@ class Register extends Component {
                     <input
                     type="text"
                     placeholder="Name"
-                    className="form-control"
+                    className={classnames('form-control form-control-lg', {
+                      'is-invalid': errors.name
+                    })}
                     name="name"
                     onChange={ this.handleInputChange }
                     value={ this.state.name }
                     />
+                    {errors.name && (<div className="invalid-feedback">{errors.name}</div>)}
                 </div>
                 <div className="form-group">
                     <input
                     type="email"
                     placeholder="Email"
-                    className="form-control"
+                    className={classnames('form-control form-control-lg', {
+                      'is-invalid': errors.email
+                  })}
                     name="email"
                     onChange={ this.handleInputChange }
                     value={ this.state.email }
                     />
+                     {errors.email && (<div className="invalid-feedback">{errors.email}</div>)}
                 </div>
                 <div className="form-group">
                     <input
                     type="password"
                     placeholder="Password"
-                    className="form-control"
+                    className={classnames('form-control form-control-lg', {
+                      'is-invalid': errors.password
+                  })}
                     name="password"
                     onChange={ this.handleInputChange }
                     value={ this.state.password }
                     />
+                    {errors.password && (<div className="invalid-feedback">{errors.password}</div>)}
                 </div>
                 <div className="form-group">
                     <input
                     type="password"
                     placeholder="Confirm Password"
-                    className="form-control"
-                    name="password_confirm"
+                    className={classnames('form-control form-control-lg', {
+                      'is-invalid': errors.password_confirmation
+                  })}
+                    name="password_confirmation"
                     onChange={ this.handleInputChange }
-                    value={ this.state.password_confirm }
+                    value={ this.state.password_confirmation }
                     />
+                    {errors.password_confirmation && (<div className="invalid-feedback">{errors.password_confirmation}</div>)}
                 </div>
                 <div className="form-group">
                     <button type="submit" className="btn btn-primary">
@@ -117,7 +143,15 @@ class Register extends Component {
           </React.Fragment>
 
         );
-    }
+    }   
 }
+
+// Register.propTypes = {
+//   registerUser: PropTypes.func.isRequired,
+// };
+
+const mapStateToProps = state => ({
+  errors: state.errors
+});
 
 export default Register;

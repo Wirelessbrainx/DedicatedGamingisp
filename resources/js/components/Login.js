@@ -43,7 +43,7 @@ class Login extends Component {
   }
 
   loginUser = (user) => dispatch => {
-    axios.post('/api/users/login', user)
+    axios.post('http://dedicatedgamingisp.com/api/login', user)
             .then(res => {
                 console.log(res.data);
             })

@@ -6274,6 +6274,68 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/classnames/index.js":
+/*!******************************************!*\
+  !*** ./node_modules/classnames/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+  Copyright (c) 2017 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg) && arg.length) {
+				var inner = classNames.apply(null, arg);
+				if (inner) {
+					classes.push(inner);
+				}
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes.push(key);
+					}
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if ( true && module.exports) {
+		classNames.default = classNames;
+		module.exports = classNames;
+	} else if (true) {
+		// register as 'classnames', consistent with npm package name
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+			return classNames;
+		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+}());
+
+
+/***/ }),
+
 /***/ "./node_modules/create-react-context/lib/implementation.js":
 /*!*****************************************************************!*\
   !*** ./node_modules/create-react-context/lib/implementation.js ***!
@@ -65893,7 +65955,7 @@ function (_Component) {
 
     _defineProperty(_assertThisInitialized(_this), "loginUser", function (user) {
       return function (dispatch) {
-        axios__WEBPACK_IMPORTED_MODULE_3___default.a.post('/api/users/login', user).then(function (res) {
+        axios__WEBPACK_IMPORTED_MODULE_3___default.a.post('http://dedicatedgamingisp.com/api/login', user).then(function (res) {
           console.log(res.data);
         })["catch"](function (err) {
           dispatch({
@@ -66090,6 +66152,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_5__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -66115,6 +66181,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
+
 var Register =
 /*#__PURE__*/
 function (_Component) {
@@ -66127,14 +66195,17 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Register).call(this));
 
-    _defineProperty(_assertThisInitialized(_this), "registerUser", function (user) {
+    _defineProperty(_assertThisInitialized(_this), "registerUser", function (user, history) {
       axios__WEBPACK_IMPORTED_MODULE_3___default.a.post('http://dedicatedgamingisp.com/api/register', user).then(function (response) {
-        console.log(response);
-      })["catch"](function (err) {
-        console.log(err); // dispatch({
-        //     type: GET_ERRORS,
-        //     payload: err.response.data
-        // });
+        (function (res) {
+          return history.push('/login');
+        });
+      })["catch"](function (error) {
+        console.log(error.response.data);
+
+        _this.setState({
+          errors: JSON.parse(error.response.data)
+        });
       });
     });
 
@@ -66142,7 +66213,7 @@ function (_Component) {
       name: '',
       email: '',
       password: '',
-      password_confirm: '',
+      password_confirmation: '',
       errors: {}
     };
     _this.handleInputChange = _this.handleInputChange.bind(_assertThisInitialized(_this));
@@ -66163,14 +66234,27 @@ function (_Component) {
         name: this.state.name,
         email: this.state.email,
         password: this.state.password,
-        password_confirmation: this.state.password_confirm //console.log(users);
+        password_confirmation: this.state.password_confirmation //console.log(users);
 
       };
-      this.registerUser(user);
+      this.registerUser(user, this.props.history);
+    }
+  }, {
+    key: "componentWillReceiveProps",
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.errors) {
+        this.setState({
+          errors: nextProps.errors
+        });
+      }
     }
   }, {
     key: "render",
     value: function render() {
+      var errors = this.state.errors;
+      console.log(errors.password);
+      console.log(errors.password_confirmation); //console.log( errors.name );
+
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
         className: "react-header"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -66186,38 +66270,54 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
         placeholder: "Name",
-        className: "form-control",
+        className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control form-control-lg', {
+          'is-invalid': errors.name
+        }),
         name: "name",
         onChange: this.handleInputChange,
         value: this.state.name
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), errors.name && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "invalid-feedback"
+      }, errors.name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "email",
         placeholder: "Email",
-        className: "form-control",
+        className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control form-control-lg', {
+          'is-invalid': errors.email
+        }),
         name: "email",
         onChange: this.handleInputChange,
         value: this.state.email
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), errors.email && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "invalid-feedback"
+      }, errors.email)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "password",
         placeholder: "Password",
-        className: "form-control",
+        className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control form-control-lg', {
+          'is-invalid': errors.password
+        }),
         name: "password",
         onChange: this.handleInputChange,
         value: this.state.password
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), errors.password && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "invalid-feedback"
+      }, errors.password)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "password",
         placeholder: "Confirm Password",
-        className: "form-control",
-        name: "password_confirm",
+        className: classnames__WEBPACK_IMPORTED_MODULE_4___default()('form-control form-control-lg', {
+          'is-invalid': errors.password_confirmation
+        }),
+        name: "password_confirmation",
         onChange: this.handleInputChange,
-        value: this.state.password_confirm
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        value: this.state.password_confirmation
+      }), errors.password_confirmation && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "invalid-feedback"
+      }, errors.password_confirmation)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "submit",
@@ -66227,7 +66327,16 @@ function (_Component) {
   }]);
 
   return Register;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]); // Register.propTypes = {
+//   registerUser: PropTypes.func.isRequired,
+// };
+
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    errors: state.errors
+  };
+};
 
 /* harmony default export */ __webpack_exports__["default"] = (Register);
 
