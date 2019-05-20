@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom'
 import ReactDOM from 'react-dom';
 
 import $ from "jquery";
@@ -45,7 +46,9 @@ class Register extends Component {
       
       axios.post('http://dedicatedgamingisp.com/api/register', user)
               .then(response => {
-                (res => history.push('/login'));
+                this.setState({
+                  redirect: true
+                });
               })
               .catch(error => {
                 console.log(error.response.data);
@@ -65,9 +68,10 @@ class Register extends Component {
 
     render() {
       const { errors } = this.state;
-      console.log( errors.password );
-      console.log( errors.password_confirmation );
-      //console.log( errors.name );
+      if (this.state.redirect) {
+        return <Redirect to='/login' />
+      }
+
         return (
           <React.Fragment>
           <header className='react-header'>

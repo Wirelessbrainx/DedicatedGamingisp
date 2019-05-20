@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import axios from "axios";
 //import { BrowserRouter, Router, Switch } from 'react-router-dom'
 import Header from './Header.js';
+import Footer from './Footer.js';
 
 
 
@@ -28,7 +29,8 @@ class Main extends Component {
         
         return (
         <React.Fragment>            
-            <Header />            
+            <Header />
+            <Footer />            
         </React.Fragment>
         )
     }

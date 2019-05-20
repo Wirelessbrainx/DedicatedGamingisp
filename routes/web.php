@@ -11,18 +11,18 @@
 |
 */
 
-// Route::get('/{path?}', function($path = null){
-//     return View::make('app');
-// })->where('path', '.*'); 
+Route::get('/{path?}', function($path = null){
+    return View::make('app');
+})->where('path', '.*'); 
 
 
-Route::get('/', function () {
-    return view('app');
-});
+// Route::get('/', function () {
+//     return view('app');
+// });
 
-// Route::get('{all?}', function(){
+// Route::get('/{all?}', function(){
 //     return view('app');
 // })->where('all', '([A-z\d-\/_.]+)?');
-// Auth::routes();
+//Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');
